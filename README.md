@@ -1,4 +1,8 @@
-![Project Logo](logo.png)
+<h1 align="center">
+  <img src="logo.png" alt="Release Drafter Logo" width="150" />
+</h1>
+
+# nmap-prometheus-exporter
 
 **Description**:
 
@@ -31,7 +35,6 @@ Before running the Docker application, ensure you have the following prerequisit
 
 2.  📂 **Navigate to the project directory**:
     
-    bashCopy code
     
     `cd nmap-prometheus-exporter` 
     
@@ -44,13 +47,11 @@ Before running the Docker application, ensure you have the following prerequisit
     -   `FREQUENCY`: Frequency of Nmap scans in seconds.
 5.  🏗️ **Build the Docker image**:
     
-    bashCopy code
     
     `docker-compose build` 
     
 6.  ▶️ **Start the Docker container**:
     
-    bashCopy code
     
     `docker-compose up -d` 
     
@@ -58,14 +59,12 @@ Before running the Docker application, ensure you have the following prerequisit
     
 8.  🛑 To stop and remove the container, use the following command:
     
-    bashCopy code
     
     `docker-compose down`    
 7.  **Access Prometheus metrics** at `http://localhost:9808/metrics` (assuming you are running this on your local machine). Adjust the URL as needed based on your environment.
     
 8.  To stop and remove the container, use the following command:
     
-    bashCopy code
     
     `docker-compose down`
     
@@ -90,4 +89,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 -   [Docker](https://www.docker.com/) - The containerization platform.
 -   [Docker Compose](https://docs.docker.com/compose/) - The tool for defining and running multi-container Docker applications.
 
-Feel free to modify this `README.md` to include more specific instructions or information about your application.
+**Logo Credit:**
+The logo design used in this project was crafted with the assistance of [LogoMakr.com/app](https://logomakr.com/app).
+We appreciate the creative support from LogoMakr in shaping our visual identity.
