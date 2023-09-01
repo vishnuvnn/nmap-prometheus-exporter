@@ -1,0 +1,21 @@
+version: '3'
+services:
+  nmap-prometheus-exporter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nmap-prometheus-exporter
+    volumes:
+      - /path/to/your/portscanip.nmap:/app/portscanip.nmap
+    ports:
+      - "9808:9808"
+    environment:
+      - FILE_PATH=/app/portscanip.nmap
+      - PORT=9808
+      - FREQUENCY=3600
+    restart: always
+
+networks:
+  default:
+    external:
+      name: bridge
