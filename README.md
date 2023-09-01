@@ -31,12 +31,14 @@ Before running the Docker application, ensure you have the following prerequisit
 1. 📥 **Clone this repository** to your local machine:
 
    ```bash
-   git clone https://github.com/your-username/nmap-prometheus-exporter.git` 
+   git clone https://github.com/your-username/nmap-prometheus-exporter.git 
+   ```
 
 2.  📂 **Navigate to the project directory**:
     
-    
-    `cd nmap-prometheus-exporter` 
+    ```bash
+    cd nmap-prometheus-exporter
+    ``` 
     
 3.  ✍️ Create a `portscanip.nmap` file in the project directory with a list of target IP addresses to scan.
     
@@ -48,25 +50,31 @@ Before running the Docker application, ensure you have the following prerequisit
 5.  🏗️ **Build the Docker image**:
     
     
-    `docker-compose build` 
+    ```bash
+    docker-compose build
+    ```
     
 6.  ▶️ **Start the Docker container**:
     
     
-    `docker-compose up -d` 
+    ```bash
+    docker-compose up -d
+    ```
     
 7.  🖥️ **Access Prometheus metrics** at `http://localhost:9808/metrics` (assuming you are running this on your local machine). Adjust the URL as needed based on your environment.
     
 8.  🛑 To stop and remove the container, use the following command:
     
-    
-    `docker-compose down`    
+    ```bash
+    docker-compose down
+    ```
 7.  **Access Prometheus metrics** at `http://localhost:9808/metrics` (assuming you are running this on your local machine). Adjust the URL as needed based on your environment.
     
 8.  To stop and remove the container, use the following command:
     
-    
-    `docker-compose down`
+    ```bash
+    docker-compose down
+    ```
     
 
 ## Environment Variables
