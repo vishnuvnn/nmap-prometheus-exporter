@@ -45,6 +45,11 @@ def nmap_scan_stats(nm, metric_info):
 
 # Main function
 def main(args):
+    # Print logo
+    with open('ascii_logo.txt', 'r') as file:
+        # Read and print the content
+        content = file.read()
+        print(content)
     nm = nmap.PortScanner()
     
     while True:
