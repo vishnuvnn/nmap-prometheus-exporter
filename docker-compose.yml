@@ -6,16 +6,17 @@ services:
       dockerfile: Dockerfile
     container_name: nmap-prometheus-exporter
     volumes:
+# Mount the host file to the container -> change host path to yoyr need
       - /path/to/your/portscanip.nmap:/app/portscanip.nmap
     ports:
       - "9808:9808"
     environment:
-      - FILE_PATH=/app/portscanip.nmap
-      - PORT=9808
-      - FREQUENCY=3600
+      - SCAN_FILE=/app/portscanip.nmap
+      - EXPORTER_PORT=9808
+      - EXPORTER_PORT=3600
     restart: always
+    networks:
+      - exporter_network
 
 networks:
-  default:
-    external:
-      name: bridge
+  exporter_network:

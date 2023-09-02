@@ -1,77 +1,74 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
-from __future__ import absolute_import, print_function
-import argparse
+from __future__ import absolute_import
 import prometheus_client
 import time
 import sys
-import nmap
-import csv
 import os
+import nmap
+import logging
 
-# Constants
-DEFAULT_FILE_PATH = "portscanip.nmap"
-DEFAULT_PORT = 9808
-DEFAULT_FREQUENCY = 3600
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
-# Function to read targets from a file
-def read_targets(file_path):
-    try:
-        with open(file_path, 'r') as f:
-            return f.read().strip().replace("\n", " ")
-    except OSError as e:
-        print(f"Could not open/read file: {file_path}. Error: {e}")
-        sys.exit(1)
+# Create Prometheus metrics without clearing them
+metric_results = prometheus_client.Gauge("nmap_scan_results",
+                                         "Holds the scanned result",
+                                         ["host",
+                                          "protocol",
+                                          "name",
+                                          "product_detected"])
+metric_info = prometheus_client.Info("nmap_scan_stats",
+                                     "Holds details about the scan")
 
-# Exposes results of the scan in prometheus format
-def nmap_scan_results(nm, metric_results):
-    metric_results.clear()
-    list_scanned_items = [line for line in csv.reader(nm.stdout.splitlines())]
-    
-    for item in list_scanned_items[1:]:
-        host, _, _, prot, port, name, _, prod, *_ = item
-        metric_results.labels(host, prot, name, prod).set(port)
+# Exposes results of the scan in Prometheus format
+def nmap_scan_results(nm):
+    list_scanned_items = []
 
-# Exposes stats of the scan in prometheus format
-def nmap_scan_stats(nm, metric_info):
-    metric_info.clear()
+    for line in str(nm.csv()).splitlines():
+        list_scanned_items.append(line)
+
+    for line in list_scanned_items[1:]:
+        host, _, _, prot, port, name, _, prod, *_ = line.split(";")
+        metric_results.labels(host, prot, name, prod).set(float(port))
+
+# Exposes stats of the scan in Prometheus format
+def nmap_scan_stats(nm):
     scanstats = nm.scanstats()
-    metric_info.info({
-        "time_elapsed": scanstats["elapsed"],
-        "uphosts": scanstats["uphosts"],
-        "downhosts": scanstats["downhosts"],
-        "totalhosts": scanstats["totalhosts"]
-    })
+    metric_info.info({"time_elapsed": scanstats["elapsed"],
+                      "uphosts": scanstats["uphosts"],
+                      "downhosts": scanstats["downhosts"],
+                      "totalhosts": scanstats["totalhosts"]})
 
 # Main function
-def main(args):
+def main():
     # Print logo
     with open('ascii_logo.txt', 'r') as file:
         # Read and print the content
         content = file.read()
         print(content)
+
     nm = nmap.PortScanner()
-    
+
     while True:
-        targets = read_targets(args.file)
-        
-        # Actual Nmap scan
+        file_name = os.getenv('SCAN_FILE', '/app/portscanip.nmap')
+        try:
+            with open(file_name, 'r') as f:
+                targets = f.read().replace("\n", " ").strip()
+        except OSError:
+            logger.error("Could not open/read file: %s", file_name)
+            sys.exit(1)
+
+        logger.info("Scanning targets: %s", targets)
         nm.scan(targets)
-        nmap_scan_results(nm, metric_results)
-        nmap_scan_stats(nm, metric_info)
-        
-        # To control scanning frequency
-        time.sleep(args.frequency)
+        nmap_scan_results(nm)
+        nmap_scan_stats(nm)
+
+        scan_frequency = float(os.getenv('SCAN_FREQUENCY', '36000'))
+        logger.info("Sleeping for %s seconds", scan_frequency)
+        time.sleep(scan_frequency)
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Nmap Prometheus Exporter')
-    parser.add_argument('-f', '--file', help=f'File with list of target IP addresses [default: {DEFAULT_FILE_PATH}]', metavar='filename', default=DEFAULT_FILE_PATH)
-    parser.add_argument('-p', '--port', type=int, help=f'Port to expose metrics [default: {DEFAULT_PORT}]', metavar='port', default=DEFAULT_PORT)
-    parser.add_argument('-c', '--frequency', type=int, help=f'Frequency of nmap scan in seconds [default: {DEFAULT_FREQUENCY}]', metavar='frequency', default=DEFAULT_FREQUENCY)
-    args = parser.parse_args()
-    
-    metric_results = prometheus_client.Gauge("nmap_scan_results", "Holds the scanned result", ["host", "protocol", "name", "product_detected"])
-    metric_info = prometheus_client.Info("nmap_scan_stats", "Holds details about the scan")
-    
-    prometheus_client.start_http_server(args.port)
-    main(args)
+    prometheus_client.start_http_server(int(os.getenv('EXPORTER_PORT', '9808')))
+    main()
