@@ -28,46 +28,39 @@ Before running the Docker application, ensure you have the following prerequisit
 
 ## Usage
 
-1. 📥 **Clone this repository** to your local machine:
+1. **Clone this repository** to your local machine:
 
    ```bash
    git clone https://github.com/your-username/nmap-prometheus-exporter.git 
    ```
 
-2.  📂 **Navigate to the project directory**:
+2.  **Navigate to the project directory**:
     
     ```bash
     cd nmap-prometheus-exporter
     ``` 
     
-3.  ✍️ Create a `portscanip.nmap` file in the project directory with a list of target IP addresses to scan.
+3.  Create a `portscanip.nmap` file in the project directory with a list of target IP addresses to scan.
     
-4.  🛠️ Customize the scanning parameters and frequency by modifying the `docker-compose.yml` file:
+4.  Customize the scanning parameters and frequency by modifying the `docker-compose.yml` file:
     
     -   `SCAN_FILE`: Path to the `portscanip.nmap` file inside the container.
     -   `EXPORTER_PORT`: Port to expose Prometheus metrics.
     -   `SCAN_FREQUENCY`: Frequency of Nmap scans in seconds.
-5.  🏗️ **Build the Docker image**:
+5.  **Build the Docker image**:
     
     
     ```bash
     docker-compose build
     ```
     
-6.  ▶️ **Start the Docker container**:
+6.  **Start the Docker container**:
     
     
     ```bash
     docker-compose up -d
     ```
     
-7.  🖥️ **Access Prometheus metrics** at `http://localhost:9808/metrics` (assuming you are running this on your local machine). Adjust the URL as needed based on your environment.
-    
-8.  🛑 To stop and remove the container, use the following command:
-    
-    ```bash
-    docker-compose down
-    ```
 7.  **Access Prometheus metrics** at `http://localhost:9808/metrics` (assuming you are running this on your local machine). Adjust the URL as needed based on your environment.
     
 8.  To stop and remove the container, use the following command:
