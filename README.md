@@ -16,7 +16,7 @@ This Docker application sets up the Nmap Prometheus Exporter, a versatile Python
 -   **Prometheus Integration**: Exposes scan results and statistics as Prometheus metrics for easy monitoring and alerting.
 -   **Customizable**: Easily configure the scan frequency, target file, and Prometheus port.
 -   **Efficient**: Uses the Nmap library for efficient and comprehensive network scanning.
--   **Open Source**: Licensed under [LICENSE_NAME] for community contribution and collaboration.
+-   **Open Source**: Licensed under the MIT License for community contribution and collaboration.
 
 ## Prerequisites
 
