@@ -156,7 +156,7 @@ To visualize the metrics collected by `nmap-prometheus-exporter` in Grafana, fol
     
     Run the command from the repository's root directory to generate the Grafana dashboard for the metrics.
     
-7. You can import this joson directly to grafana as a dashboard
+7. You can import this json directly to grafana as a dashboard
 
 
 ### Importing Grafana Dashboard

@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
     container_name: nmap-prometheus-exporter
     volumes:
-# Mount the host file to the container -> change host path to yoyr need
+# Mount the host file to the container -> change host path to your need
       - /path/to/your/portscanip.nmap:/app/portscanip.nmap
     ports:
       - "9808:9808"
