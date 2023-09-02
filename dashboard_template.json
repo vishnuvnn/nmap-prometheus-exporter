@@ -1,0 +1,340 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 248,
+  "iteration": 1693642040799,
+  "links": [
+    {
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [],
+      "targetBlank": true,
+      "title": "",
+      "type": "link",
+      "url": "https://github.com/vishnuvnn/nmap-prometheus-exporter"
+    }
+  ],
+  "panels": [
+    {
+      "cacheTimeout": null,
+      "datasource": "PROMETHEUS_DS_PLACEHOLDER",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "valueName": "last"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 12,
+        "x": 6,
+        "y": 0
+      },
+      "id": 8,
+      "interval": null,
+      "links": [],
+      "options": {
+        "content": "It took {{time_elapsed}} sec for scanning {{totalhosts}} hosts",
+        "defaultContent": "NO RESULTS"
+      },
+      "pluginVersion": "1.7.2",
+      "targets": [
+        {
+          "expr": "nmap_scan_stats_info{cloud=\"$cloud\"}",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "queryType": "randomWalk",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Scan info",
+      "transformations": [],
+      "transparent": true,
+      "type": "marcusolsson-dynamictext-panel"
+    },
+    {
+      "aliasColors": {},
+      "breakPoint": "50%",
+      "cacheTimeout": null,
+      "combine": {
+        "label": "Others",
+        "threshold": 0
+      },
+      "datasource": "PROMETHEUS_DS_PLACEHOLDER",
+      "decimals": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fontSize": "80%",
+      "format": "none",
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 4
+      },
+      "id": 4,
+      "interval": null,
+      "legend": {
+        "header": "count of open ports",
+        "percentage": false,
+        "show": true,
+        "sideWidth": 300,
+        "values": true
+      },
+      "legendType": "Right side",
+      "links": [],
+      "nullPointMode": "connected",
+      "pieType": "donut",
+      "pluginVersion": "7.3.7",
+      "strokeWidth": "0.5",
+      "targets": [
+        {
+          "expr": "count(nmap_scan_results{cloud=\"$cloud\"}) by (host)",
+          "format": "time_series",
+          "interval": "",
+          "legendFormat": "{{host}}",
+          "queryType": "randomWalk",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Host wise ports open",
+      "transparent": true,
+      "type": "grafana-piechart-panel",
+      "valueName": "current"
+    },
+    {
+      "datasource": "PROMETHEUS_DS_PLACEHOLDER",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-YlRd"
+          },
+          "custom": {},
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 4
+      },
+      "id": 6,
+      "options": {
+        "tiling": "treemapSquarify"
+      },
+      "pluginVersion": "7.3.7",
+      "targets": [
+        {
+          "expr": "count(nmap_scan_results{cloud=\"$cloud\"}) by (name)",
+          "format": "table",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{name}}",
+          "queryType": "randomWalk",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Types of ports open",
+      "transparent": true,
+      "type": "marcusolsson-treemap-panel"
+    },
+    {
+      "datasource": "PROMETHEUS_DS_PLACEHOLDER",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "super-light-green",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "center",
+            "displayMode": "color-text",
+            "filterable": true
+          },
+          "mappings": [
+            {
+              "from": "",
+              "id": 1,
+              "text": "",
+              "to": "",
+              "type": 1
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
+      "id": 2,
+      "options": {
+        "showHeader": true
+      },
+      "pluginVersion": "7.3.7",
+      "targets": [
+        {
+          "expr": "nmap_scan_results{cloud=\"$cloud\"}",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "queryType": "randomWalk",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Port scan report",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true,
+              "product_detected": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "Value": "PORT_DETECTED",
+              "cloud": "CLOUD",
+              "host": "HOST",
+              "instance": "",
+              "job": "",
+              "name": "NAME",
+              "protocol": "PROTOCOL"
+            }
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "table"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 26,
+  "style": "dark",
+  "tags": [
+    "nmap-prometheus-exporter-dashboard",
+    "https://github.com/vishnuvnn/nmap-prometheus-exporter"
+  ],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": "aws",
+          "value": "aws"
+        },
+        "datasource": "PROMETHEUS_DS_PLACEHOLDER",
+        "definition": "label_values(nmap_scan_results,cloud)",
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "Cloud",
+        "multi": false,
+        "name": "cloud",
+        "options": [
+          {
+            "selected": true,
+            "text": "aws",
+            "value": "aws"
+          },
+          {
+            "selected": false,
+            "text": "azure",
+            "value": "azure"
+          }
+        ],
+        "query": "label_values(nmap_scan_results,cloud)",
+        "refresh": 0,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-5m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Port Scan",
+  "uid": "nm00001",
+  "version": 16
+}
