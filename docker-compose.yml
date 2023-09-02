@@ -13,7 +13,7 @@ services:
     environment:
       - SCAN_FILE=/app/portscanip.nmap
       - EXPORTER_PORT=9808
-      - EXPORTER_PORT=3600
+      - SCAN_FREQUENCY=3600
     restart: always
     networks:
       - exporter_network
