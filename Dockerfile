@@ -10,8 +10,11 @@ COPY . /app
 # Install any needed packages specified in requirements.txt
 RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
+# Install Nmap
+RUN apt-get update && apt-get install -y nmap
+
 # Make the Python script executable
 RUN chmod +x exporter.py
 
 # Use environment variables for script parameters
-CMD ["./exporter.py", "-f", "$FILE_PATH", "-p", "$PORT", "-c", "$FREQUENCY"]
+CMD ["./exporter.py"]
