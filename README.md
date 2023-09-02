@@ -77,14 +77,6 @@ Before running the Docker application, ensure you have the following prerequisit
     ```
     
 
-## Environment Variables
-
-You can customize the scanning parameters by modifying the environment variables in the `docker-compose.yml` file:
-
--   `FILE_PATH`: Path to the `portscanip.nmap` file inside the container.
--   `PORT`: Port to expose Prometheus metrics.
--   `FREQUENCY`: Frequency of Nmap scans in seconds.
-
 ## Adding Prometheus Target and Alert Rules
 
 To monitor your `nmap-prometheus-exporter` instance effectively, you can configure Prometheus to scrape metrics from it and set up alert rules for potential issues. Here's how you can do it:
