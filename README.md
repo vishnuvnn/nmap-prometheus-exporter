@@ -44,9 +44,9 @@ Before running the Docker application, ensure you have the following prerequisit
     
 4.  🛠️ Customize the scanning parameters and frequency by modifying the `docker-compose.yml` file:
     
-    -   `FILE_PATH`: Path to the `portscanip.nmap` file inside the container.
-    -   `PORT`: Port to expose Prometheus metrics.
-    -   `FREQUENCY`: Frequency of Nmap scans in seconds.
+    -   `SCAN_FILE`: Path to the `portscanip.nmap` file inside the container.
+    -   `EXPORTER_PORT`: Port to expose Prometheus metrics.
+    -   `SCAN_FREQUENCY`: Frequency of Nmap scans in seconds.
 5.  🏗️ **Build the Docker image**:
     
     
