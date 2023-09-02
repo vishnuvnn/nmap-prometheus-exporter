@@ -198,6 +198,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 -   [Prometheus](https://prometheus.io/) - The monitoring and alerting toolkit.
 -   [Docker](https://www.docker.com/) - The containerization platform.
 -   [Docker Compose](https://docs.docker.com/compose/) - The tool for defining and running multi-container Docker applications.
+-   [Grafana](https://grafana.com/) - The visualization and monitoring platform.
 
 **Logo Credit:**
 The logo design used in this project was crafted with the assistance of [LogoMakr.com/app](https://logomakr.com/app).
