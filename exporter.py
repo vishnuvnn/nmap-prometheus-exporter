@@ -43,32 +43,45 @@ def nmap_scan_stats(nm):
 
 # Main function
 def main():
-    # Print logo
-    with open('ascii_logo.txt', 'r') as file:
-        # Read and print the content
-        content = file.read()
-        print(content)
+    try:
+        # Print logo
+        with open('ascii_logo.txt', 'r') as file:
+            # Read and print the content
+            content = file.read()
+            print(content)
 
-    nm = nmap.PortScanner()
+        nm = nmap.PortScanner()
 
-    while True:
-        file_name = os.getenv('SCAN_FILE', '/app/portscanip.nmap')
-        try:
-            with open(file_name, 'r') as f:
-                targets = f.read().replace("\n", " ").strip()
-        except OSError:
-            logger.error("Could not open/read file: %s", file_name)
-            sys.exit(1)
+        while True:
+            file_name = os.getenv('SCAN_FILE', '/app/portscanip.nmap')
+            try:
+                with open(file_name, 'r') as f:
+                    targets = f.read().replace("\n", " ").strip()
+                    logger.info("Loaded scan targets from %s", file_name)
+            except OSError as e:
+                logger.error("Could not open/read file %s: %s", file_name, str(e))
+                sys.exit(1)
 
-        logger.info("Scanning targets: %s", targets)
-        nm.scan(targets)
-        nmap_scan_results(nm)
-        nmap_scan_stats(nm)
+            logger.info("Scanning targets: %s", targets)
+            try:
+                nm.scan(targets)
+                nmap_scan_results(nm)
+                nmap_scan_stats(nm)
+                logger.info("Scan completed successfully")
+            except nmap.nmap.PortScannerError as e:
+                logger.error("Nmap scan failed: %s", str(e))
 
-        scan_frequency = float(os.getenv('SCAN_FREQUENCY', '36000'))
-        logger.info("Sleeping for %s seconds", scan_frequency)
-        time.sleep(scan_frequency)
+            scan_frequency = float(os.getenv('SCAN_FREQUENCY', '36000'))
+            logger.info("Sleeping for %s seconds", scan_frequency)
+            time.sleep(scan_frequency)
+
+    except KeyboardInterrupt:
+        logger.info("Received KeyboardInterrupt. Exiting.")
+        sys.exit(0)  # Exit gracefully
+    except Exception as e:
+        logger.error("An unexpected error occurred: %s", str(e))
 
 if __name__ == '__main__':
     prometheus_client.start_http_server(int(os.getenv('EXPORTER_PORT', '9808')))
     main()
+
