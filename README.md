@@ -6,13 +6,13 @@
 
 **Description**:
 
-This Docker application sets up the Nmap Prometheus Exporter, a versatile Python utility designed to scan and monitor network hosts and services using Nmap. It exposes the scan results and statistics in Prometheus-compatible format. This exporter helps network administrators and DevOps teams gain insights into their network infrastructure, making it easier to detect changes, assess security, and maintain network health.
+This Docker application sets up the Nmap Prometheus Exporter, a versatile Python utility designed to scan and monitor network hosts and services using Nmap. It exposes the scan results and statistics in a Prometheus-compatible format. This exporter helps network administrators and DevOps teams gain insights into their network infrastructure, making it easier to detect changes, assess security, and maintain network health.
 
 **Key Features**:
 
 -   **Dockerized**: Easily deploy the Nmap Prometheus Exporter as a Docker container.
 -   **Cross-Platform**: Platform-independent codebase ensuring compatibility with various operating systems.
--   **Automated Scanning**: Regularly scans a list of target IP addresses defined in the `portscanip.nmap` file.
+-   **Automated Scanning**: Regularly scans a list of target IP addresses by dynamically fetching from Azure or a file.
 -   **Prometheus Integration**: Exposes scan results and statistics as Prometheus metrics for easy monitoring and alerting.
 -   **Customizable**: Easily configure the scan frequency, target file, and Prometheus port.
 -   **Efficient**: Uses the Nmap library for efficient and comprehensive network scanning.
@@ -25,50 +25,66 @@ Before running the Docker application, ensure you have the following prerequisit
 - [Docker](https://docs.docker.com/get-docker/)
 - [Docker Compose](https://docs.docker.com/compose/install/)
 
-
 ## Usage
 
 1. **Clone this repository** to your local machine:
 
    ```bash
-   git clone https://github.com/your-username/nmap-prometheus-exporter.git 
-   ```
+   git clone https://github.com/your-username/nmap-prometheus-exporter.git`` 
 
 2.  **Navigate to the project directory**:
     
-    ```bash
-    cd nmap-prometheus-exporter
-    ``` 
     
-3.  Create a `portscanip.nmap` file in the project directory with a list of target IP addresses to scan.
+    `cd nmap-prometheus-exporter` 
     
-4.  Customize the scanning parameters and frequency by modifying the `docker-compose.yml` file:
+3.  Create a `.env` file in the project directory with your environment variables. See the example in the `.env` section below.
+
+
+4.  **Build the Docker image**:
     
-    -   `SCAN_FILE`: Path to the `portscanip.nmap` file inside the container.
-    -   `EXPORTER_PORT`: Port to expose Prometheus metrics.
-    -   `SCAN_FREQUENCY`: Frequency of Nmap scans in seconds.
-5.  **Build the Docker image**:
+    `docker-compose build` 
     
+5.  **Start the Docker container**:
     
-    ```bash
-    docker-compose build
-    ```
+    `docker-compose up -d` 
     
-6.  **Start the Docker container**:
+6.  **Access Prometheus metrics** at `http://localhost:9808/metrics` (assuming you are running this on your local machine). Adjust the URL as needed based on your environment.
+    
+7.  To stop and remove the container, use the following command:
     
     
-    ```bash
-    docker-compose up -d
-    ```
+    `docker-compose down` 
     
-7.  **Access Prometheus metrics** at `http://localhost:9808/metrics` (assuming you are running this on your local machine). Adjust the URL as needed based on your environment.
-    
-8.  To stop and remove the container, use the following command:
-    
-    ```bash
-    docker-compose down
-    ```
-    
+
+### Environment Variables (`.env` file)
+
+Create a `.env` file in the project directory with the following variables:
+
+If the list of IPs needs to be fetched from `azure` :
+Replace the placeholders (`your_azure_client_id`, `your_azure_client_secret`, `your_azure_tenant_id`, and `your_azure_subscription_id`) with your actual Azure credentials.
+
+```bash
+TARGET_SOURCE=azure
+AZURE_CLIENT_ID=your_azure_client_id
+AZURE_CLIENT_SECRET=your_azure_client_secret
+AZURE_TENANT_ID=your_azure_tenant_id
+SCAN_FREQUENCY=36000
+EXPORTER_PORT=9808
+```
+
+If the list of IPs need to be fetched from  `file` :
+Uncomment volume mount part from `docker-compose.yml` & replace `/path/to/your/portscanip.nmap`
+
+Where `portscanip.nmap` is line terminated list of IP addresses
+
+
+```bash
+TARGET_SOURCE=file
+TARGET_FILE=/app/portscanip.nmap
+SCAN_FREQUENCY=36000
+EXPORTER_PORT=9808
+```
+
 
 ## Adding Prometheus Target and Alert Rules
 
@@ -76,11 +92,11 @@ To monitor your `nmap-prometheus-exporter` instance effectively, you can configu
 
 ### Prometheus Target Configuration
 
-1. Edit your Prometheus configuration file, typically named `prometheus.yml`.
-
-2. Add a new job configuration under `scrape_configs` to specify the target to scrape metrics from your `nmap-prometheus-exporter` instance. Replace `<exporter-host>` with the hostname or IP address where your exporter is running and `<port>` with the configured port (default: 9808).
-
-    ```yaml
+1.  Edit your Prometheus configuration file, typically named `prometheus.yml`.
+    
+2.  Add a new job configuration under `scrape_configs` to specify the target to scrape metrics from your `nmap-prometheus-exporter` instance. Replace `<exporter-host>` with the hostname or IP address where your exporter is running and `<port>` with the configured port (default: 9808).
+    
+```yaml
     - job_name: nmap
       scrape_interval: 60s
       scrape_timeout: 30s
@@ -88,23 +104,26 @@ To monitor your `nmap-prometheus-exporter` instance effectively, you can configu
       static_configs:
       - targets: ['<exporter-host>:<port>']
         labels:
-          cloud: CLOUD_NAME # Replace "CLOUD_NAME" with your cloud provider (aws, azure, gcp or any other)
-    ```
-
-3. Save the `prometheus.yml` file.
-
-4. Restart Prometheus to apply the changes.
+          cloud: CLOUD_NAME # Replace "CLOUD_NAME" with your cloud provider (aws, azure, gcp, or any other)
+```
+    
+3.  Save the `prometheus.yml` file.
+    
+4.  Restart Prometheus to apply the changes.
+    
 
 ### Alert Rules Configuration
 
 To set up alert rules for your `nmap-prometheus-exporter`, follow these steps:
 
-1. Edit your Prometheus alerting rules file, typically named `alert.rules.yml`.
+1.  Edit your Prometheus alerting rules file, typically named `alert.rules.yml`.
+    
+2.  Add your alerting rules to the file. Here's an example rule that alerts when the `nmap-exporter` service is down:
+    
 
-2. Add your alerting rules to the file. Here's an example rule that alerts when the `nmap-exporter` service is down:
-
+yamlCopy code
 ```yaml
-groups:
+`groups:
   - alert: awsNmapExporterDown
     expr: up{job="nmap"} == 0
     for: 1m
@@ -125,18 +144,16 @@ groups:
     annotations:
       summary: "Port 22 is open to the world on an instance in CLOUD_NAME with IP address {{ $labels.host }}"
       description: "Port 22 is open to the world on an instance in "CLOUD_NAME" with IP address {{ $labels.host }}"
+``` 
 
-```
-
-3. Save the `alert.rules.yml` file.
-
-4. Reload Prometheus to apply the new alert rules.
+3.  Save the `alert.rules.yml` file.
+    
+4.  Reload Prometheus to apply the new alert rules.
+    
 
 With these configurations in place, Prometheus will scrape metrics from your `nmap-prometheus-exporter`, and alerting rules will trigger alerts based on defined conditions. Customize the alerting rules to fit your monitoring needs.
 
-Remember to adapt the configuration to your specific environment and requirements.
-
-### Generate grafana dashboard
+### Generate Grafana Dashboard
 
 To visualize the metrics collected by `nmap-prometheus-exporter` in Grafana, follow these steps:
 
@@ -148,16 +165,18 @@ To visualize the metrics collected by `nmap-prometheus-exporter` in Grafana, fol
     
 4.  In the Configuration menu, click on "Data Sources."
     
-5.  You should now see a list of datasources configured in your Grafana instance.
+5.  You should now see a list of data sources configured in your Grafana instance.
     
 6.  Replace "YOUR_DS_NAME" with the Prometheus data source name where `nmap-prometheus-exporter`'s metrics are present in the following command:
     
-    `DATASOURCE="YOUR_DS_NAME" ; sed "s/PROMETHEUS_DS_PLACEHOLDER/$DATASOURCE/g" dashboard_template.json`     
+    bashCopy code
+    
+    `DATASOURCE="YOUR_DS_NAME" ; sed "s/PROMETHEUS_DS_PLACEHOLDER/$DATASOURCE/g" dashboard_template.json` 
     
     Run the command from the repository's root directory to generate the Grafana dashboard for the metrics.
     
-7. You can import this json directly to grafana as a dashboard
-
+7.  You can import this JSON directly to Grafana as a dashboard.
+    
 
 ### Importing Grafana Dashboard
 
@@ -184,13 +203,11 @@ To visualize the metrics collected by `nmap-prometheus-exporter` in Grafana, fol
 
 Now you have successfully imported the Grafana dashboard that visualizes the metrics collected by the `nmap-prometheus-exporter` into your Grafana instance.
 
-Remember to adjust any panel configurations or queries if necessary to align the dashboard with your specific monitoring requirements.
-
+Remember to adapt the configuration to your specific environment and requirements.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
+This project is licensed under the MIT License - see the [LICENSE](https://chat.openai.com/c/LICENSE) file for details.
 
 ## Acknowledgments
 
@@ -200,6 +217,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 -   [Docker Compose](https://docs.docker.com/compose/) - The tool for defining and running multi-container Docker applications.
 -   [Grafana](https://grafana.com/) - The visualization and monitoring platform.
 
-**Logo Credit:**
-The logo design used in this project was crafted with the assistance of [LogoMakr.com/app](https://logomakr.com/app).
-We appreciate the creative support from LogoMakr in shaping our visual identity.
+**Logo Credit:** The logo design used in this project was crafted with the assistance of [LogoMakr.com/app](https://logomakr.com/app). We appreciate the creative support from LogoMakr in shaping our visual identity.

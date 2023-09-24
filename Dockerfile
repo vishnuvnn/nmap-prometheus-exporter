@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:3.8-slim
+FROM python:3.11-alpine
 
 # Set the working directory to /app
 WORKDIR /app
@@ -11,7 +11,7 @@ COPY . /app
 RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
 # Install Nmap
-RUN apt-get update && apt-get install -y nmap
+RUN apk update && apk add nmap nmap-scripts
 
 # Make the Python script executable
 RUN chmod +x exporter.py
