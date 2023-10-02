@@ -4,9 +4,10 @@ from __future__ import absolute_import
 import time
 import sys
 import os
+import json
 import nmap
 import logging
-from modules.ip_fetcher import fetch_azure_ips, fetch_ips_from_file
+from modules.ip_fetcher import fetch_azure_ips, fetch_ips_from_file, fetch_aws_ips
 from modules.prometheus_format import expose_nmap_scan_results, expose_nmap_scan_stats, start_prometheus_server
 
 # Configure logging
@@ -42,7 +43,8 @@ def main():
                     targets = fetch_ips_from_file(target_file)
 
             elif target_source == "azure":
-                required_env_vars = ['AZURE_CLIENT_ID', 'AZURE_CLIENT_SECRET', 'AZURE_TENANT_ID', 'AZURE_SUBSCRIPTION_ID']
+                #required_env_vars = ['AZURE_CLIENT_ID', 'AZURE_CLIENT_SECRET', 'AZURE_TENANT_ID']
+                required_env_vars = ['AZURE_CREDENTIALS']
                 missing_vars = [var for var in required_env_vars if os.getenv(var) is None]
 
                 if missing_vars:
@@ -50,16 +52,28 @@ def main():
                     error_message = f"The following Azure environment variables are missing: {', '.join(missing_vars)}"
                     raise EnvironmentError(error_message)
                 else:
-                    client_id = os.getenv('AZURE_CLIENT_ID')
-                    client_secret = os.getenv('AZURE_CLIENT_SECRET')
-                    tenant_id = os.getenv('AZURE_TENANT_ID')
-                    subscription_id = os.getenv('AZURE_SUBSCRIPTION_ID')
-                    
+                    azure_credentials_json = os.getenv('AZURE_CREDENTIALS', '[]')
                     # Use the function from the modules directory
-                    azure_targets = fetch_azure_ips(client_id, client_secret, tenant_id, subscription_id)
+                    azure_targets = fetch_azure_ips(azure_credentials_json)
                     # space seperated string
-                    print(azure_targets)
                     targets = " ".join(azure_targets)
+ 
+            elif target_source == "aws":  # Add support for AWS as a target source
+                required_env_vars = ['AWS_CREDENTIALS']
+                missing_vars = [var for var in required_env_vars if os.getenv(var) is None]
+
+                if missing_vars:
+                    # Handle the case where some Azure environment variables are missing
+                    error_message = f"The following Azure environment variables are missing: {', '.join(missing_vars)}"
+                    raise EnvironmentError(error_message)
+
+                else:
+                    # Retrieve AWS credentials from environment variables
+                    aws_credentials_json = os.getenv('AWS_CREDENTIALS', '[]')
+                    # Use the function from the modules directory
+                    aws_targets = fetch_aws_ips(aws_credentials_json)
+                    # space seperated string
+                    targets = " ".join(aws_targets)
 
             else:
                 # Handle the case when the target source is neither "file" nor "azure"

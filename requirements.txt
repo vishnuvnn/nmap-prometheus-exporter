@@ -2,3 +2,4 @@ prometheus_client==0.9.0
 python-nmap==0.7.1
 azure-identity==1.14.0
 azure-mgmt-subscription==3.1.1
+boto3==1.28.57
