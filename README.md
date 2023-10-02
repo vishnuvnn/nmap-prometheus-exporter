@@ -66,12 +66,23 @@ Replace the placeholders (`your_azure_client_id`, `your_azure_client_secret`, `y
 
 ```bash
 TARGET_SOURCE=azure
-AZURE_CLIENT_ID=your_azure_client_id
-AZURE_CLIENT_SECRET=your_azure_client_secret
-AZURE_TENANT_ID=your_azure_tenant_id
+AZURE_CREDENTIALS=[{"AZURE_CLIENT_ID":"your_azure_client_id", "AZURE_CLIENT_SECRET":"your_azure_client_secret", "AZURE_TENANT_ID":"your_azure_tenant_id"}]
 SCAN_FREQUENCY=36000
 EXPORTER_PORT=9808
 ```
+
+If the list of IPs needs to be fetched from `aws` :
+Replace the placeholders (`your_aws_access_key_id`, `your_aws_secret_key`, `your_azure_tenant_id`, `your_aws_profile_name` and `your_aws_region`) with your actual AWS credentials.
+
+```bash
+TARGET_SOURCE=aws
+AWS_CREDENTIALS=[{"AWS_ACCESS_KEY_ID":"your_aws_access_key_id", "AWS_SECRET_ACCESS_KEY": "your_aws_secret_key", "AWS_PROFILE_NAME":"your_aws_profile_name", "AWS_REGIONS": ["your_aws_region"]}]
+SCAN_FREQUENCY=36000
+EXPORTER_PORT=9808
+```
+> **Note**: Multiple credentials whether AWS or Azure can be passed in the following format: 
+> **CREDENTIALS=[ { CREDENTIALS 1 }, { CREDENTIALS 2 } .... { CREDENTIALS N } ]**
+ 
 
 If the list of IPs need to be fetched from  `file` :
 Uncomment volume mount part from `docker-compose.yml` & replace `/path/to/your/portscanip.nmap`
@@ -219,3 +230,4 @@ This project is licensed under the MIT License - see the [LICENSE](https://chat.
 -   [Grafana](https://grafana.com/) - The visualization and monitoring platform.
 
 **Logo Credit:** The logo design used in this project was crafted with the assistance of [LogoMakr.com/app](https://logomakr.com/app). We appreciate the creative support from LogoMakr in shaping our visual identity.
+
